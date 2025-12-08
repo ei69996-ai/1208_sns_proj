@@ -1,6 +1,6 @@
 "use client";
 
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
 import { useMemo } from "react";
 
@@ -58,7 +58,7 @@ import { useMemo } from "react";
  *     fetchData();
  *   }, [user, supabase]);
  *
- *   return <div>{/* 데이터 표시 */}</div>;
+ *   return <div>데이터 표시</div>;
  * }
  * ```
  *
@@ -79,14 +79,15 @@ export function useClerkSupabaseClient() {
       );
     }
 
-    // Supabase 공식 가이드 패턴: @supabase/ssr의 createBrowserClient 사용
-    // Clerk 통합: accessToken으로 Clerk 토큰 전달
-    return createBrowserClient(supabaseUrl, supabaseKey, {
-      // Clerk 세션 토큰을 Supabase 요청에 자동으로 포함
-      // 이 토큰은 Clerk Dashboard에서 Supabase 통합을 활성화하면
-      // 'role': 'authenticated' 클레임이 자동으로 포함됨
-      async accessToken() {
-        return (await getToken()) ?? null;
+    // @supabase/supabase-js의 createClient 사용
+    // Clerk 통합: accessToken 옵션으로 Clerk 토큰 전달
+    return createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false, // Clerk가 세션을 관리하므로 Supabase 세션은 유지하지 않음
+        autoRefreshToken: false, // Clerk가 토큰을 관리하므로 자동 갱신 불필요
+        async accessToken() {
+          return (await getToken()) ?? null;
+        },
       },
     });
   }, [getToken]);

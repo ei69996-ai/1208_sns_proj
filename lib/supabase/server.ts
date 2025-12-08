@@ -32,7 +32,7 @@ import { auth } from "@clerk/nextjs/server";
  * import { Suspense } from 'react';
  *
  * async function DataComponent() {
- *   const supabase = await createClerkSupabaseClient();
+ *   const supabase = createClerkSupabaseClient();
  *   const { data, error } = await supabase.from('tasks').select('*');
  *
  *   if (error) {
