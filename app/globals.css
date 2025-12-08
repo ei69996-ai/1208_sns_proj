@@ -41,6 +41,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Instagram 컬러 (Tailwind 유틸리티 클래스로 사용 가능) */
+  --color-instagram-blue: var(--instagram-blue);
+  --color-instagram-background: var(--instagram-background);
+  --color-instagram-card: var(--instagram-card);
+  --color-instagram-border: var(--instagram-border);
+  --color-instagram-text-primary: var(--instagram-text-primary);
+  --color-instagram-text-secondary: var(--instagram-text-secondary);
+  --color-instagram-like: var(--instagram-like);
 }
 
 :root {
@@ -76,6 +85,25 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Instagram 컬러 스키마 */
+  --instagram-blue: #0095f6;
+  --instagram-background: #fafafa;
+  --instagram-card: #ffffff;
+  --instagram-border: #dbdbdb;
+  --instagram-text-primary: #262626;
+  --instagram-text-secondary: #8e8e8e;
+  --instagram-like: #ed4956;
+
+  /* Instagram 타이포그래피 */
+  --font-instagram: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-xl: 20px;
+  --font-normal: 400;
+  --font-semibold: 600;
+  --font-bold: 700;
 }
 
 .dark {
@@ -118,6 +146,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Instagram 폰트 패밀리 적용 */
+    font-family: var(--font-instagram);
   }
   main {
     @apply max-w-7xl mx-auto pt-16 px-4;
