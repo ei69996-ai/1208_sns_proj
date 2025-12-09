@@ -68,9 +68,20 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={item.onClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    // Link는 기본적으로 Enter 키를 처리하지만, Space 키는 명시적으로 처리
+                    if (e.key === " " && item.onClick) {
+                      e.preventDefault();
+                      item.onClick(e as React.MouseEvent<HTMLAnchorElement>);
+                    }
+                  }
+                }}
+                aria-label={item.label}
                 className={`
                   flex items-center gap-4 px-3 py-2 rounded-lg
                   transition-colors duration-200
+                  focus:outline-none focus:ring-2 focus:ring-[var(--instagram-blue)] focus:ring-offset-2
                   ${
                     isActive || isHomeActive
                       ? "font-semibold text-[var(--instagram-text-primary)]"
@@ -104,9 +115,20 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={item.onClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    // Link는 기본적으로 Enter 키를 처리하지만, Space 키는 명시적으로 처리
+                    if (e.key === " " && item.onClick) {
+                      e.preventDefault();
+                      item.onClick(e as React.MouseEvent<HTMLAnchorElement>);
+                    }
+                  }
+                }}
+                aria-label={item.label}
                 className={`
                   flex items-center justify-center w-12 h-12 rounded-lg
                   transition-colors duration-200
+                  focus:outline-none focus:ring-2 focus:ring-[var(--instagram-blue)] focus:ring-offset-2
                   ${
                     isActive || isHomeActive
                       ? "bg-instagram-background"

@@ -44,6 +44,8 @@ export function CreatePostModal({
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const captionTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileSelectButtonRef = useRef<HTMLDivElement>(null);
 
   // 모달이 닫힐 때 상태 초기화
   useEffect(() => {
@@ -55,6 +57,20 @@ export function CreatePostModal({
       setIsUploading(false);
     }
   }, [open]);
+
+  // 모달이 열릴 때 첫 번째 상호작용 요소로 포커스 이동
+  useEffect(() => {
+    if (open) {
+      // 이미지가 선택되지 않았으면 파일 선택 버튼으로, 선택되었으면 캡션 입력 필드로
+      setTimeout(() => {
+        if (!selectedFile && fileSelectButtonRef.current) {
+          fileSelectButtonRef.current.focus();
+        } else if (captionTextareaRef.current) {
+          captionTextareaRef.current.focus();
+        }
+      }, 100);
+    }
+  }, [open, selectedFile]);
 
   // 미리보기 URL 정리
   useEffect(() => {
@@ -140,6 +156,9 @@ export function CreatePostModal({
         onSuccess();
       }
 
+      // 피드 새로고침을 위한 이벤트 발생
+      window.dispatchEvent(new CustomEvent("post-created"));
+
       // 피드 새로고침 (Next.js 15 App Router)
       router.refresh();
 
@@ -160,9 +179,20 @@ export function CreatePostModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0">
+      <DialogContent 
+        className="max-w-2xl p-0"
+        onEscapeKeyDown={(e) => {
+          // ESC 키로 모달 닫기 (Radix UI가 자동 처리하지만 명시적으로 처리)
+          if (!isUploading) {
+            onOpenChange(false);
+          } else {
+            e.preventDefault(); // 업로드 중에는 ESC로 닫기 방지
+          }
+        }}
+        aria-labelledby="create-post-title"
+      >
         <DialogHeader className="px-6 py-4 border-b border-[var(--instagram-border)]">
-          <DialogTitle className="text-center">새 게시물 만들기</DialogTitle>
+          <DialogTitle id="create-post-title" className="text-center">새 게시물 만들기</DialogTitle>
         </DialogHeader>
 
         <div className="p-6">
@@ -187,8 +217,18 @@ export function CreatePostModal({
               </div>
             ) : (
               <div
+                ref={fileSelectButtonRef}
                 onClick={handleSelectFile}
-                className="relative aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-[var(--instagram-blue)] transition-colors"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleSelectFile();
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label="이미지 선택"
+                className="relative aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-[var(--instagram-blue)] transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--instagram-blue)] focus:ring-offset-2"
               >
                 <Upload className="w-12 h-12 text-gray-400 mb-4" />
                 <p className="text-sm font-semibold text-[var(--instagram-text-primary)] mb-1">
@@ -217,11 +257,19 @@ export function CreatePostModal({
               캡션
             </label>
             <textarea
+              ref={captionTextareaRef}
               id="caption"
               value={caption}
               onChange={(e) => {
                 if (e.target.value.length <= MAX_CAPTION_LENGTH) {
                   setCaption(e.target.value);
+                }
+              }}
+              onKeyDown={(e) => {
+                // Shift+Enter는 줄바꿈 허용
+                if (e.key === "Enter" && !e.shiftKey) {
+                  // Enter만 눌렀을 때는 기본 동작 (줄바꿈) 허용
+                  // 필요시 여기서 제출 로직 추가 가능
                 }
               }}
               placeholder="문구 입력..."

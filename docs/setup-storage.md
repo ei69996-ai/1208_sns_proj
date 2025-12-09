@@ -18,7 +18,7 @@
 
 다음 정보를 입력합니다:
 
-- **Name**: `posts`
+- **Name**: `uploads`
 - **Public bucket**: ✅ **체크** (공개 읽기 활성화)
   - 이렇게 하면 인증 없이도 이미지 URL로 접근 가능합니다
 - **File size limit**: `5MB` (또는 원하는 크기)
@@ -39,7 +39,7 @@
 
 개발 초기 단계에서는 RLS를 비활성화하여 빠르게 개발할 수 있습니다:
 
-1. Storage 메뉴에서 `posts` 버킷 클릭
+1. Storage 메뉴에서 `uploads` 버킷 클릭
 2. **"Policies"** 탭 클릭
 3. RLS가 비활성화되어 있는지 확인
 4. 필요시 **"Disable RLS"** 클릭
@@ -50,7 +50,7 @@
 
 #### 1. RLS 활성화
 
-1. Storage 메뉴에서 `posts` 버킷 클릭
+1. Storage 메뉴에서 `uploads` 버킷 클릭
 2. **"Policies"** 탭 클릭
 3. **"Enable RLS"** 클릭
 
@@ -59,14 +59,14 @@
 인증된 사용자만 자신의 폴더에 업로드할 수 있도록 설정:
 
 ```sql
--- Storage 버킷: posts
+-- Storage 버킷: uploads
 -- 정책: 인증된 사용자만 자신의 폴더에 업로드 가능
 
 CREATE POLICY "Users can upload to their own folder"
 ON storage.objects FOR INSERT
 TO authenticated
 WITH CHECK (
-  bucket_id = 'posts' AND
+  bucket_id = 'uploads' AND
   (storage.foldername(name))[1] = (auth.jwt()->>'sub')
 );
 ```
@@ -77,20 +77,20 @@ WITH CHECK (
 
 ```sql
 -- 공개 읽기 정책 (Public bucket이므로)
-CREATE POLICY "Public can read posts"
+CREATE POLICY "Public can read uploads"
 ON storage.objects FOR SELECT
 TO public
-USING (bucket_id = 'posts');
+USING (bucket_id = 'uploads');
 ```
 
 또는 인증된 사용자만 읽기:
 
 ```sql
 -- 인증된 사용자만 읽기
-CREATE POLICY "Authenticated users can read posts"
+CREATE POLICY "Authenticated users can read uploads"
 ON storage.objects FOR SELECT
 TO authenticated
-USING (bucket_id = 'posts');
+USING (bucket_id = 'uploads');
 ```
 
 #### 4. 삭제 정책 (DELETE)
@@ -102,7 +102,7 @@ CREATE POLICY "Users can delete their own files"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (
-  bucket_id = 'posts' AND
+  bucket_id = 'uploads' AND
   (storage.foldername(name))[1] = (auth.jwt()->>'sub')
 );
 ```
@@ -116,11 +116,11 @@ CREATE POLICY "Users can update their own files"
 ON storage.objects FOR UPDATE
 TO authenticated
 USING (
-  bucket_id = 'posts' AND
+  bucket_id = 'uploads' AND
   (storage.foldername(name))[1] = (auth.jwt()->>'sub')
 )
 WITH CHECK (
-  bucket_id = 'posts' AND
+  bucket_id = 'uploads' AND
   (storage.foldername(name))[1] = (auth.jwt()->>'sub')
 );
 ```
@@ -130,7 +130,7 @@ WITH CHECK (
 프로젝트에서는 다음 경로 구조를 사용합니다:
 
 ```
-posts/
+uploads/
   └── {clerk_user_id}/
       └── {post_id}/
           └── {filename}
@@ -138,7 +138,7 @@ posts/
 
 예시:
 ```
-posts/
+uploads/
   └── user_2abc123def/
       └── post_550e8400-e29b-41d4-a716-446655440000/
           └── image.jpg
@@ -160,7 +160,7 @@ import { createClerkSupabaseClient } from '@/lib/supabase/server';
 
 const supabase = await createClerkSupabaseClient();
 const { data, error } = await supabase.storage
-  .from('posts')
+  .from('uploads')
   .upload(`${clerkUserId}/${postId}/${filename}`, file);
 
 if (error) {
@@ -176,7 +176,7 @@ if (error) {
 
 ```typescript
 const { data } = supabase.storage
-  .from('posts')
+  .from('uploads')
   .getPublicUrl(`${clerkUserId}/${postId}/${filename}`);
 
 console.log('Public URL:', data.publicUrl);
@@ -190,7 +190,7 @@ console.log('Public URL:', data.publicUrl);
 
 ```typescript
 const { data, error } = await supabase.storage
-  .from('posts')
+  .from('uploads')
   .list(`${clerkUserId}`, {
     limit: 100,
     offset: 0,
@@ -205,7 +205,7 @@ const { data, error } = await supabase.storage
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-NEXT_PUBLIC_STORAGE_BUCKET=posts
+NEXT_PUBLIC_STORAGE_BUCKET=uploads
 ```
 
 ## 문제 해결

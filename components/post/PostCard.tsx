@@ -154,7 +154,10 @@ function PostCardComponent({ post, onLike, onCommentClick, onDelete }: PostCardP
 
   return (
     <>
-    <article className="bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded-lg mb-4 max-w-[630px] mx-auto">
+    <article 
+      className="bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded-lg mb-4 max-w-[630px] mx-auto"
+      aria-label={`${post.user.name}님의 게시물`}
+    >
       {/* 헤더 (60px) */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-[var(--instagram-border)]">
         <div className="flex items-center gap-3">
@@ -183,6 +186,8 @@ function PostCardComponent({ post, onLike, onCommentClick, onDelete }: PostCardP
             onClick={() => setShowMenu(!showMenu)}
             className="text-[var(--instagram-text-primary)] hover:opacity-70"
             aria-label="더보기"
+            aria-expanded={showMenu}
+            aria-haspopup="menu"
             disabled={isDeleting}
           >
             <MoreHorizontal className="w-6 h-6" />
@@ -190,10 +195,15 @@ function PostCardComponent({ post, onLike, onCommentClick, onDelete }: PostCardP
 
           {/* 드롭다운 메뉴 */}
           {showMenu && isOwnPost && (
-            <div className="absolute right-0 top-8 bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded shadow-lg z-10 min-w-[120px]">
+            <div 
+              role="menu"
+              className="absolute right-0 top-8 bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded shadow-lg z-10 min-w-[120px]"
+            >
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
+                role="menuitem"
+                aria-label="게시물 삭제"
                 className="w-full px-4 py-2 text-sm text-red-500 hover:bg-[var(--instagram-background)] text-left disabled:opacity-50"
               >
                 {isDeleting ? "삭제 중..." : "삭제"}
@@ -208,6 +218,15 @@ function PostCardComponent({ post, onLike, onCommentClick, onDelete }: PostCardP
         className="relative aspect-square bg-gray-100 cursor-pointer"
         onDoubleClick={handleDoubleTap}
         onClick={() => setIsModalOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsModalOpen(true);
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label="게시물 상세 보기"
       >
         <Image
           src={post.image_url}

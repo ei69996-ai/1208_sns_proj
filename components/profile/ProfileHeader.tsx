@@ -141,25 +141,34 @@ export function ProfileHeader({
         </div>
 
         {/* 통계 */}
-        <div className="flex items-center gap-6 md:gap-8 mb-4">
-          <div className="text-center md:text-left">
-            <span className="font-semibold text-[var(--instagram-text-primary)]">
+        <div className="flex items-center gap-6 md:gap-8 mb-4" role="list">
+          <div className="text-center md:text-left" role="listitem">
+            <span 
+              className="font-semibold text-[var(--instagram-text-primary)]"
+              aria-label={`게시물 ${userData.posts_count.toLocaleString()}개`}
+            >
               {userData.posts_count.toLocaleString()}
             </span>
             <span className="text-[var(--instagram-text-secondary)] ml-1">
               게시물
             </span>
           </div>
-          <div className="text-center md:text-left">
-            <span className="font-semibold text-[var(--instagram-text-primary)]">
+          <div className="text-center md:text-left" role="listitem">
+            <span 
+              className="font-semibold text-[var(--instagram-text-primary)]"
+              aria-label={`팔로워 ${userData.followers_count.toLocaleString()}명`}
+            >
               {userData.followers_count.toLocaleString()}
             </span>
             <span className="text-[var(--instagram-text-secondary)] ml-1">
               팔로워
             </span>
           </div>
-          <div className="text-center md:text-left">
-            <span className="font-semibold text-[var(--instagram-text-primary)]">
+          <div className="text-center md:text-left" role="listitem">
+            <span 
+              className="font-semibold text-[var(--instagram-text-primary)]"
+              aria-label={`팔로잉 ${userData.following_count.toLocaleString()}명`}
+            >
               {userData.following_count.toLocaleString()}
             </span>
             <span className="text-[var(--instagram-text-secondary)] ml-1">

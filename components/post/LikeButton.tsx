@@ -74,7 +74,6 @@ export const LikeButton = forwardRef<LikeButtonRef, LikeButtonProps>(
           if (response.status === 409) {
             // 이미 좋아요한 경우 (UNIQUE 제약)
             // 상태는 이미 업데이트되었으므로 그대로 유지
-            console.log("Already liked");
           } else {
             // 에러 메시지 추출
             const errorMessage = await getApiErrorMessage(response);

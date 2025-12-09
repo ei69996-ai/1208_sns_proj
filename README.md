@@ -357,7 +357,7 @@ pnpm verify:all
 **검증 스크립트가 확인하는 항목:**
 - ✅ `users`, `posts`, `likes`, `comments`, `follows` 테이블 생성 여부
 - ✅ `post_stats`, `user_stats` 뷰 생성 여부
-- ✅ `posts` Storage 버킷 생성 및 공개 설정 여부
+- ✅ `uploads` Storage 버킷 생성 및 공개 설정 여부
 
 > **참고**: 검증 스크립트를 실행하기 전에 `.env` 파일에 Supabase 환경 변수가 설정되어 있어야 합니다.
 

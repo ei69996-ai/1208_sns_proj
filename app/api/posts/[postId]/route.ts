@@ -186,9 +186,9 @@ export async function DELETE(
 
     // Supabase Storage에서 이미지 삭제
     // image_url에서 Storage 경로 추출
-    // 예: https://xxx.supabase.co/storage/v1/object/public/posts/user_id/filename.jpg
-    // 또는: https://xxx.supabase.co/storage/v1/object/sign/posts/user_id/filename.jpg
-    const STORAGE_BUCKET = process.env.NEXT_PUBLIC_STORAGE_BUCKET || "posts";
+    // 예: https://xxx.supabase.co/storage/v1/object/public/uploads/user_id/filename.jpg
+    // 또는: https://xxx.supabase.co/storage/v1/object/sign/uploads/user_id/filename.jpg
+    const STORAGE_BUCKET = process.env.NEXT_PUBLIC_STORAGE_BUCKET || "uploads";
     
     try {
       // image_url에서 경로 추출

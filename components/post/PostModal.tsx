@@ -183,7 +183,18 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
 
   return (
     <Dialog open={!!postId} onOpenChange={handleClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] p-0 overflow-hidden md:flex md:flex-row">
+      <DialogContent 
+        className="max-w-5xl max-h-[90vh] p-0 overflow-hidden flex flex-col md:flex-row md:max-h-[90vh] h-[100vh] md:h-auto"
+        onEscapeKeyDown={(e) => {
+          // ESC 키로 모달 닫기
+          if (!isDeleting) {
+            handleClose();
+          } else {
+            e.preventDefault(); // 삭제 중에는 ESC로 닫기 방지
+          }
+        }}
+        aria-labelledby={post ? `post-modal-${post.id}` : undefined}
+      >
         {/* 로딩 상태 */}
         {loading && (
           <div className="flex items-center justify-center w-full h-[500px]">
@@ -202,7 +213,7 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
         {post && !loading && !error && (
           <>
             {/* 이미지 영역 (Desktop: 50%, Mobile: 전체) */}
-            <div className="relative w-full md:w-1/2 h-[400px] md:h-auto bg-black flex items-center justify-center">
+            <div className="relative w-full md:w-1/2 h-[50vh] md:h-auto bg-black flex items-center justify-center flex-shrink-0">
               <Image
                 src={post.image_url}
                 alt={post.caption || "게시물 이미지"}
@@ -214,7 +225,7 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
             </div>
 
             {/* 댓글 영역 (Desktop: 50%, Mobile: 전체) */}
-            <div className="w-full md:w-1/2 flex flex-col h-[400px] md:h-auto max-h-[90vh]">
+            <div className="w-full md:w-1/2 flex flex-col h-[50vh] md:h-auto md:max-h-[90vh] overflow-y-auto flex-shrink-0">
               {/* 헤더 */}
               <header className="flex items-center justify-between px-4 py-3 border-b border-[var(--instagram-border)] flex-shrink-0">
                 <div className="flex items-center gap-3">
@@ -222,6 +233,7 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
                   <Link
                     href={`/profile/${post.user.clerk_id}`}
                     className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden hover:opacity-70"
+                    aria-label={`${post.user.name}님의 프로필`}
                   >
                     <div className="w-full h-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-semibold text-sm">
                       {post.user.name.charAt(0).toUpperCase()}
@@ -232,6 +244,7 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
                   <Link
                     href={`/profile/${post.user.clerk_id}`}
                     className="font-semibold text-[var(--instagram-text-primary)] hover:opacity-70"
+                    id={`post-modal-${post.id}`}
                   >
                     {post.user.name}
                   </Link>
@@ -243,6 +256,8 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
                     onClick={() => setShowMenu(!showMenu)}
                     className="text-[var(--instagram-text-primary)] hover:opacity-70"
                     aria-label="더보기"
+                    aria-expanded={showMenu}
+                    aria-haspopup="menu"
                     disabled={isDeleting}
                   >
                     <MoreHorizontal className="w-6 h-6" />
@@ -250,10 +265,15 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
 
                   {/* 드롭다운 메뉴 */}
                   {showMenu && isOwnPost && (
-                    <div className="absolute right-0 top-8 bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded shadow-lg z-10 min-w-[120px]">
+                    <div 
+                      role="menu"
+                      className="absolute right-0 top-8 bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded shadow-lg z-10 min-w-[120px]"
+                    >
                       <button
                         onClick={handleDelete}
                         disabled={isDeleting}
+                        role="menuitem"
+                        aria-label="게시물 삭제"
                         className="w-full px-4 py-2 text-sm text-red-500 hover:bg-[var(--instagram-background)] text-left disabled:opacity-50"
                       >
                         {isDeleting ? "삭제 중..." : "삭제"}

@@ -39,7 +39,8 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
   // 게시물 목록 가져오기
   const fetchPosts = useCallback(
     async (reset = false) => {
-      if (loading) return;
+      // reset일 때는 loading 체크를 하지 않음 (강제 새로고침)
+      if (!reset && loading) return;
 
       setLoading(true);
       try {
@@ -84,6 +85,19 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
     }
   }, []);
 
+  // 게시물 생성 후 새로고침 이벤트 리스너
+  useEffect(() => {
+    const handlePostCreated = () => {
+      fetchPosts(true);
+    };
+
+    window.addEventListener("post-created", handlePostCreated);
+
+    return () => {
+      window.removeEventListener("post-created", handlePostCreated);
+    };
+  }, [fetchPosts]);
+
   // 무한 스크롤: Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -114,13 +128,11 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
     // LikeButton이 직접 API를 호출하고 상태를 관리하므로
     // 여기서는 추가 작업이 필요하지 않음
     // 필요시 피드 상태를 업데이트할 수 있음
-    console.log("Like toggled for post:", postId);
   };
 
   // 댓글 클릭 핸들러
   const handleCommentClick = (postId: string) => {
-    // 댓글 모달 열기 (나중에 구현)
-    console.log("Comment clicked for post:", postId);
+    // 댓글 모달 열기 (PostCard에서 처리됨)
   };
 
   // 게시물 삭제 핸들러

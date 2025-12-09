@@ -47,7 +47,7 @@ async function InstrumentsData() {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold">악기 목록</h2>
       <ul className="list-disc list-inside space-y-2">
-        {instruments.map((instrument: any) => (
+        {instruments.map((instrument: { id: number; name: string }) => (
           <li key={instrument.id} className="text-gray-700">
             {instrument.name}
           </li>

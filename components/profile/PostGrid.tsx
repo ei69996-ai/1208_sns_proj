@@ -99,7 +99,7 @@ export function PostGrid({ userId, onPostClick }: PostGridProps) {
   // 로딩 상태
   if (loading) {
     return (
-      <div className="grid grid-cols-3 gap-1 md:gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-1">
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
@@ -131,7 +131,7 @@ export function PostGrid({ userId, onPostClick }: PostGridProps) {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-1 md:gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 md:gap-1">
         {posts.map((post) => (
           <div
             key={post.id}

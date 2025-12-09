@@ -33,22 +33,22 @@ async function verifyStorage() {
       process.exit(1);
     }
 
-    const postsBucket = buckets?.find((bucket) => bucket.name === "posts");
+    const uploadsBucket = buckets?.find((bucket) => bucket.name === "uploads");
 
-    if (!postsBucket) {
-      console.log("❌ 'posts' 버킷이 생성되지 않았습니다.");
+    if (!uploadsBucket) {
+      console.log("❌ 'uploads' 버킷이 생성되지 않았습니다.");
       console.log("\n📖 가이드: docs/setup-storage.md");
-      console.log("   Supabase Dashboard → Storage → New bucket → 이름: 'posts', Public bucket: 체크");
+      console.log("   Supabase Dashboard → Storage → New bucket → 이름: 'uploads', Public bucket: 체크");
       process.exit(1);
     }
 
-    console.log("✅ 'posts' 버킷이 생성되었습니다.");
-    console.log(`   - 이름: ${postsBucket.name}`);
-    console.log(`   - 공개 여부: ${postsBucket.public ? "공개" : "비공개"}`);
-    console.log(`   - 생성일: ${postsBucket.created_at}`);
+    console.log("✅ 'uploads' 버킷이 생성되었습니다.");
+    console.log(`   - 이름: ${uploadsBucket.name}`);
+    console.log(`   - 공개 여부: ${uploadsBucket.public ? "공개" : "비공개"}`);
+    console.log(`   - 생성일: ${uploadsBucket.created_at}`);
 
-    if (!postsBucket.public) {
-      console.log("\n⚠️ 경고: 'posts' 버킷이 공개로 설정되지 않았습니다.");
+    if (!uploadsBucket.public) {
+      console.log("\n⚠️ 경고: 'uploads' 버킷이 공개로 설정되지 않았습니다.");
       console.log("   공개 읽기를 활성화하려면 Supabase Dashboard에서 설정을 변경하세요.");
     }
 

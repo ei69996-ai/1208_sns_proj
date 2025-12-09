@@ -53,7 +53,6 @@ export function FollowButton({
           if (response.status === 409) {
             // 이미 팔로우 중인 경우 (UNIQUE 제약)
             // 상태는 이미 업데이트되었으므로 그대로 유지
-            console.log("Already following");
           } else {
             // 에러 메시지 추출
             const errorMessage = await getApiErrorMessage(response);

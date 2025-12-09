@@ -134,14 +134,6 @@ export interface PostWithUser extends Post {
 }
 
 /**
- * Post + User + Stats 조합 타입
- * 게시물, 작성자 정보, 통계 정보를 모두 포함
- */
-export interface PostWithUserAndStats extends PostWithStats {
-  user: User;
-}
-
-/**
  * Comment + User 정보 포함 타입
  * 댓글과 작성자 정보를 함께 포함
  */
