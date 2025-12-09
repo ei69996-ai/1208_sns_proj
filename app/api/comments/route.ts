@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     if (!postId) {
       return NextResponse.json(
-        { error: "postId is required" },
+        { error: "게시물 ID가 필요합니다." },
         { status: 400 }
       );
     }
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     if (commentsError) {
       console.error("Error fetching comments:", commentsError);
       return NextResponse.json(
-        { error: "Failed to fetch comments" },
+        { error: "댓글을 불러오는데 실패했습니다." },
         { status: 500 }
       );
     }
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error in GET /api/comments:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
 
     if (!clerkUserId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "로그인이 필요합니다." },
         { status: 401 }
       );
     }
@@ -101,14 +101,14 @@ export async function POST(request: NextRequest) {
 
     if (!postId) {
       return NextResponse.json(
-        { error: "postId is required" },
+        { error: "게시물 ID가 필요합니다." },
         { status: 400 }
       );
     }
 
     if (!content || !content.trim()) {
       return NextResponse.json(
-        { error: "content is required" },
+        { error: "댓글 내용을 입력해주세요." },
         { status: 400 }
       );
     }
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     if (userError || !userData) {
       console.error("Error fetching user:", userError);
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "사용자를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
     if (commentError) {
       console.error("Error creating comment:", commentError);
       return NextResponse.json(
-        { error: "Failed to create comment", details: commentError.message },
+        { error: "댓글 작성에 실패했습니다.", details: commentError.message },
         { status: 500 }
       );
     }
@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error in POST /api/comments:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }
@@ -183,7 +183,7 @@ export async function DELETE(request: NextRequest) {
 
     if (!clerkUserId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "로그인이 필요합니다." },
         { status: 401 }
       );
     }
@@ -194,7 +194,7 @@ export async function DELETE(request: NextRequest) {
 
     if (!commentId) {
       return NextResponse.json(
-        { error: "commentId is required" },
+        { error: "댓글 ID가 필요합니다." },
         { status: 400 }
       );
     }
@@ -211,7 +211,7 @@ export async function DELETE(request: NextRequest) {
     if (userError || !userData) {
       console.error("Error fetching user:", userError);
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "사용자를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -233,7 +233,7 @@ export async function DELETE(request: NextRequest) {
     // 본인 댓글인지 확인
     if (commentData.user_id !== userData.id) {
       return NextResponse.json(
-        { error: "Forbidden: You can only delete your own comments" },
+        { error: "본인의 댓글만 삭제할 수 있습니다." },
         { status: 403 }
       );
     }
@@ -247,7 +247,7 @@ export async function DELETE(request: NextRequest) {
     if (deleteError) {
       console.error("Error deleting comment:", deleteError);
       return NextResponse.json(
-        { error: "Failed to delete comment" },
+        { error: "댓글 삭제에 실패했습니다." },
         { status: 500 }
       );
     }
@@ -258,7 +258,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error("Error in DELETE /api/comments:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }

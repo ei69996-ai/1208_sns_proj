@@ -3,6 +3,7 @@
 import { useState, KeyboardEvent } from "react";
 import { useUser } from "@clerk/nextjs";
 import type { CommentWithUser } from "@/lib/types";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file CommentForm.tsx
@@ -52,8 +53,8 @@ export function CommentForm({ postId, onSubmit }: CommentFormProps) {
       });
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to create comment");
+        const errorMessage = await getApiErrorMessage(response);
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
@@ -68,7 +69,12 @@ export function CommentForm({ postId, onSubmit }: CommentFormProps) {
       }
     } catch (err) {
       console.error("Error creating comment:", err);
-      setError(err instanceof Error ? err.message : "댓글 작성에 실패했습니다.");
+      const errorMessage = isNetworkError(err)
+        ? getNetworkErrorMessage(err)
+        : err instanceof Error
+        ? err.message
+        : "댓글 작성에 실패했습니다.";
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

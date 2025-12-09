@@ -2,6 +2,7 @@
 
 import { useState, forwardRef, useImperativeHandle } from "react";
 import { Heart } from "lucide-react";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file LikeButton.tsx
@@ -74,16 +75,13 @@ export const LikeButton = forwardRef<LikeButtonRef, LikeButtonProps>(
             // 이미 좋아요한 경우 (UNIQUE 제약)
             // 상태는 이미 업데이트되었으므로 그대로 유지
             console.log("Already liked");
-          } else if (response.status === 401) {
-            // 인증 실패 - 상태 롤백
-            setIsLiked(initialIsLiked);
-            setLikesCount(initialLikesCount);
-            alert("로그인이 필요합니다.");
           } else {
-            // 기타 에러 - 상태 롤백
+            // 에러 메시지 추출
+            const errorMessage = await getApiErrorMessage(response);
+            // 상태 롤백
             setIsLiked(initialIsLiked);
             setLikesCount(initialLikesCount);
-            throw new Error("Failed to like post");
+            alert(errorMessage);
           }
         } else {
           // 성공 시 콜백 호출
@@ -98,17 +96,12 @@ export const LikeButton = forwardRef<LikeButtonRef, LikeButtonProps>(
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            // 인증 실패 - 상태 롤백
-            setIsLiked(initialIsLiked);
-            setLikesCount(initialLikesCount);
-            alert("로그인이 필요합니다.");
-          } else {
-            // 기타 에러 - 상태 롤백
-            setIsLiked(initialIsLiked);
-            setLikesCount(initialLikesCount);
-            throw new Error("Failed to unlike post");
-          }
+          // 에러 메시지 추출
+          const errorMessage = await getApiErrorMessage(response);
+          // 상태 롤백
+          setIsLiked(initialIsLiked);
+          setLikesCount(initialLikesCount);
+          alert(errorMessage);
         } else {
           // 성공 시 콜백 호출
           if (onToggle) {
@@ -121,7 +114,11 @@ export const LikeButton = forwardRef<LikeButtonRef, LikeButtonProps>(
       // 에러 발생 시 상태 롤백
       setIsLiked(initialIsLiked);
       setLikesCount(initialLikesCount);
-      alert("좋아요 처리 중 오류가 발생했습니다.");
+      // 네트워크 에러인지 확인
+      const errorMessage = isNetworkError(error)
+        ? getNetworkErrorMessage(error)
+        : "좋아요 처리 중 오류가 발생했습니다.";
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { PostCard } from "./PostCard";
 import { PostCardSkeleton } from "./PostCardSkeleton";
 import type { PostWithUserAndStats } from "@/lib/types";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file PostFeed.tsx
@@ -49,7 +50,8 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
 
         const response = await fetch(url);
         if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+          const errorMessage = await getApiErrorMessage(response);
+          throw new Error(errorMessage);
         }
 
         const result: PostsResponse = await response.json();
@@ -64,6 +66,10 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
         setHasMore(result.meta.hasMore);
       } catch (error) {
         console.error("Error fetching posts:", error);
+        // 네트워크 에러인 경우 사용자에게 알림 (선택사항)
+        if (isNetworkError(error)) {
+          console.error("Network error:", getNetworkErrorMessage(error));
+        }
       } finally {
         setLoading(false);
       }

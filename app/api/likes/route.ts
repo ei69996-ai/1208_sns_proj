@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     if (!clerkUserId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "로그인이 필요합니다." },
         { status: 401 }
       );
     }
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (!postId) {
       return NextResponse.json(
-        { error: "postId is required" },
+        { error: "게시물 ID가 필요합니다." },
         { status: 400 }
       );
     }
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     if (userError || !userData) {
       console.error("Error fetching user:", userError);
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "사용자를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -69,14 +69,14 @@ export async function POST(request: NextRequest) {
       if (likeError.code === "23505") {
         // PostgreSQL unique violation
         return NextResponse.json(
-          { error: "Already liked" },
+          { error: "이미 좋아요한 게시물입니다." },
           { status: 409 }
         );
       }
 
       console.error("Error creating like:", likeError);
       return NextResponse.json(
-        { error: "Failed to create like" },
+        { error: "좋아요 추가에 실패했습니다." },
         { status: 500 }
       );
     }
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error in POST /api/likes:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }
@@ -105,7 +105,7 @@ export async function DELETE(request: NextRequest) {
 
     if (!clerkUserId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "로그인이 필요합니다." },
         { status: 401 }
       );
     }
@@ -116,7 +116,7 @@ export async function DELETE(request: NextRequest) {
 
     if (!postId) {
       return NextResponse.json(
-        { error: "postId is required" },
+        { error: "게시물 ID가 필요합니다." },
         { status: 400 }
       );
     }
@@ -133,7 +133,7 @@ export async function DELETE(request: NextRequest) {
     if (userError || !userData) {
       console.error("Error fetching user:", userError);
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "사용자를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -148,7 +148,7 @@ export async function DELETE(request: NextRequest) {
     if (deleteError) {
       console.error("Error deleting like:", deleteError);
       return NextResponse.json(
-        { error: "Failed to delete like" },
+        { error: "좋아요 취소에 실패했습니다." },
         { status: 500 }
       );
     }
@@ -163,7 +163,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error("Error in DELETE /api/likes:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }

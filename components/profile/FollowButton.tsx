@@ -54,18 +54,12 @@ export function FollowButton({
             // 이미 팔로우 중인 경우 (UNIQUE 제약)
             // 상태는 이미 업데이트되었으므로 그대로 유지
             console.log("Already following");
-          } else if (response.status === 401) {
-            // 인증 실패 - 상태 롤백
-            setIsFollowing(initialIsFollowing);
-            alert("로그인이 필요합니다.");
-          } else if (response.status === 400) {
-            // 자기 자신 팔로우 시도
-            setIsFollowing(initialIsFollowing);
-            alert("자기 자신을 팔로우할 수 없습니다.");
           } else {
-            // 기타 에러 - 상태 롤백
+            // 에러 메시지 추출
+            const errorMessage = await getApiErrorMessage(response);
+            // 상태 롤백
             setIsFollowing(initialIsFollowing);
-            throw new Error("Failed to follow user");
+            alert(errorMessage);
           }
         } else {
           // 성공 시 콜백 호출
@@ -80,15 +74,11 @@ export function FollowButton({
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            // 인증 실패 - 상태 롤백
-            setIsFollowing(initialIsFollowing);
-            alert("로그인이 필요합니다.");
-          } else {
-            // 기타 에러 - 상태 롤백
-            setIsFollowing(initialIsFollowing);
-            throw new Error("Failed to unfollow user");
-          }
+          // 에러 메시지 추출
+          const errorMessage = await getApiErrorMessage(response);
+          // 상태 롤백
+          setIsFollowing(initialIsFollowing);
+          alert(errorMessage);
         } else {
           // 성공 시 콜백 호출
           if (onToggle) {
@@ -99,7 +89,10 @@ export function FollowButton({
     } catch (error) {
       console.error("Error toggling follow:", error);
       setIsFollowing(initialIsFollowing);
-      alert("팔로우 처리 중 오류가 발생했습니다.");
+      const errorMessage = isNetworkError(error)
+        ? getNetworkErrorMessage(error)
+        : "팔로우 처리 중 오류가 발생했습니다.";
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -47,7 +47,8 @@ export function ProfileHeader({
 
         const response = await fetch(`/api/users/${userId}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch user data");
+          const errorMessage = await getApiErrorMessage(response);
+          throw new Error(errorMessage);
         }
 
         const result = await response.json();
@@ -56,7 +57,10 @@ export function ProfileHeader({
         setUserData(data);
       } catch (err) {
         console.error("Error fetching user data:", err);
-        setError("사용자 정보를 불러오는데 실패했습니다.");
+        const errorMessage = isNetworkError(err)
+          ? getNetworkErrorMessage(err)
+          : "사용자 정보를 불러오는데 실패했습니다.";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

@@ -32,7 +32,7 @@ export async function GET(
 
     if (!postId) {
       return NextResponse.json(
-        { error: "postId is required" },
+        { error: "게시물 ID가 필요합니다." },
         { status: 400 }
       );
     }
@@ -59,7 +59,7 @@ export async function GET(
     if (postError || !post) {
       console.error("Error fetching post:", postError);
       return NextResponse.json(
-        { error: "Post not found" },
+        { error: "게시물을 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -110,7 +110,7 @@ export async function GET(
   } catch (error) {
     console.error("Error in GET /api/posts/[postId]:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }
@@ -130,7 +130,7 @@ export async function DELETE(
 
     if (!clerkUserId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "로그인이 필요합니다." },
         { status: 401 }
       );
     }
@@ -139,7 +139,7 @@ export async function DELETE(
 
     if (!postId) {
       return NextResponse.json(
-        { error: "postId is required" },
+        { error: "게시물 ID가 필요합니다." },
         { status: 400 }
       );
     }
@@ -156,7 +156,7 @@ export async function DELETE(
     if (postError || !post) {
       console.error("Error fetching post:", postError);
       return NextResponse.json(
-        { error: "Post not found" },
+        { error: "게시물을 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -171,7 +171,7 @@ export async function DELETE(
     if (userError || !userData) {
       console.error("Error fetching user:", userError);
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "사용자를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -179,7 +179,7 @@ export async function DELETE(
     // 본인 게시물인지 확인
     if (post.user_id !== userData.id) {
       return NextResponse.json(
-        { error: "Forbidden: You can only delete your own posts" },
+        { error: "본인의 게시물만 삭제할 수 있습니다." },
         { status: 403 }
       );
     }
@@ -227,7 +227,7 @@ export async function DELETE(
     if (deleteError) {
       console.error("Error deleting post:", deleteError);
       return NextResponse.json(
-        { error: "Failed to delete post" },
+        { error: "게시물 삭제에 실패했습니다." },
         { status: 500 }
       );
     }
@@ -238,7 +238,7 @@ export async function DELETE(
   } catch (error) {
     console.error("Error in DELETE /api/posts/[postId]:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }

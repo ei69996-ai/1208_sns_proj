@@ -74,8 +74,8 @@ export function CommentList({
       });
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to delete comment");
+        const errorMessage = await getApiErrorMessage(response);
+        throw new Error(errorMessage);
       }
 
       // 댓글 목록에서 제거
@@ -87,7 +87,12 @@ export function CommentList({
       }
     } catch (err) {
       console.error("Error deleting comment:", err);
-      alert(err instanceof Error ? err.message : "댓글 삭제에 실패했습니다.");
+      const errorMessage = isNetworkError(err)
+        ? getNetworkErrorMessage(err)
+        : err instanceof Error
+        ? err.message
+        : "댓글 삭제에 실패했습니다.";
+      alert(errorMessage);
     } finally {
       setDeletingId(null);
     }

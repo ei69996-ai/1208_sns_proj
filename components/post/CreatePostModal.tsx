@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Upload, X } from "lucide-react";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file CreatePostModal.tsx
@@ -130,8 +131,8 @@ export function CreatePostModal({
       });
 
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || "게시물 업로드에 실패했습니다.");
+        const errorMessage = await getApiErrorMessage(response);
+        throw new Error(errorMessage);
       }
 
       // 성공 시 콜백 호출
@@ -145,10 +146,13 @@ export function CreatePostModal({
       // 모달 닫기
       onOpenChange(false);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "게시물 업로드에 실패했습니다."
-      );
       console.error("Error uploading post:", err);
+      const errorMessage = isNetworkError(err)
+        ? getNetworkErrorMessage(err)
+        : err instanceof Error
+        ? err.message
+        : "게시물 업로드에 실패했습니다.";
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
     }

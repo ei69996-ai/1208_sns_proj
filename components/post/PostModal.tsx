@@ -13,6 +13,7 @@ import type { PostWithUserAndStats } from "@/lib/types";
 import { LikeButton, type LikeButtonRef } from "./LikeButton";
 import { CommentList } from "@/components/comment/CommentList";
 import { CommentForm } from "@/components/comment/CommentForm";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file PostModal.tsx
@@ -71,7 +72,8 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
 
         const response = await fetch(`/api/posts/${postId}`);
         if (!response.ok) {
-          throw new Error("Failed to fetch post");
+          const errorMessage = await getApiErrorMessage(response);
+          throw new Error(errorMessage);
         }
 
         const result = await response.json();
@@ -150,8 +152,8 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "게시물 삭제에 실패했습니다.");
+        const errorMessage = await getApiErrorMessage(response);
+        throw new Error(errorMessage);
       }
 
       // 부모 컴포넌트에 삭제 알림
@@ -163,7 +165,12 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
       handleClose();
     } catch (error) {
       console.error("Error deleting post:", error);
-      alert(error instanceof Error ? error.message : "게시물 삭제에 실패했습니다.");
+      const errorMessage = isNetworkError(error)
+        ? getNetworkErrorMessage(error)
+        : error instanceof Error
+        ? error.message
+        : "게시물 삭제에 실패했습니다.";
+      alert(errorMessage);
     } finally {
       setIsDeleting(false);
       setShowMenu(false);
@@ -202,6 +209,7 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
                 fill
                 className="object-contain"
                 sizes="(max-width: 768px) 100vw, 50vw"
+                priority
               />
             </div>
 

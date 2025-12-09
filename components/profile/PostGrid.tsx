@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Heart, MessageCircle } from "lucide-react";
 import type { PostWithUserAndStats } from "@/lib/types";
 import { PostModal } from "@/components/post/PostModal";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file PostGrid.tsx
@@ -50,14 +51,18 @@ export function PostGrid({ userId, onPostClick }: PostGridProps) {
         const response = await fetch(url);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch posts");
+          const errorMessage = await getApiErrorMessage(response);
+          throw new Error(errorMessage);
         }
 
         const result: PostsResponse = await response.json();
         setPosts(result.data || []);
       } catch (err) {
         console.error("Error fetching posts:", err);
-        setError("게시물을 불러오는데 실패했습니다.");
+        const errorMessage = isNetworkError(err)
+          ? getNetworkErrorMessage(err)
+          : "게시물을 불러오는데 실패했습니다.";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -135,6 +140,7 @@ export function PostGrid({ userId, onPostClick }: PostGridProps) {
           >
             {/* 썸네일 이미지 */}
             <Image
+              loading="lazy"
               src={post.image_url}
               alt={post.caption || "게시물 이미지"}
               fill

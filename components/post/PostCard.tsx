@@ -4,12 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react";
 import type { PostWithUserAndStats, CommentWithUser } from "@/lib/types";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, memo } from "react";
 import { useUser } from "@clerk/nextjs";
 import { LikeButton, type LikeButtonRef } from "./LikeButton";
 import { CommentList } from "@/components/comment/CommentList";
 import { CommentForm } from "@/components/comment/CommentForm";
 import { PostModal } from "./PostModal";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file PostCard.tsx
@@ -27,7 +28,7 @@ interface PostCardProps {
   onDelete?: (postId: string) => void;
 }
 
-export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardProps) {
+function PostCardComponent({ post, onLike, onCommentClick, onDelete }: PostCardProps) {
   const { user } = useUser();
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked || false);
@@ -44,20 +45,28 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
   // 본인 게시물인지 확인
   const isOwnPost = user?.id === post.user.clerk_id;
 
-  // 캡션 줄 수 계산 (대략적으로)
-  const captionLines = post.caption
-    ? Math.ceil(post.caption.length / 40) // 대략 40자당 1줄
-    : 0;
-  const shouldShowMore = captionLines > 2;
+  // 캡션 줄 수 계산 (대략적으로) - useMemo로 메모이제이션
+  const { captionLines, shouldShowMore } = useMemo(() => {
+    const lines = post.caption
+      ? Math.ceil(post.caption.length / 40) // 대략 40자당 1줄
+      : 0;
+    return {
+      captionLines: lines,
+      shouldShowMore: lines > 2,
+    };
+  }, [post.caption]);
 
-  // 좋아요 토글 핸들러 (LikeButton의 onToggle 콜백)
-  const handleLikeToggle = (newIsLiked: boolean, newCount: number) => {
-    setIsLiked(newIsLiked);
-    setLikesCount(newCount);
-    if (onLike) {
-      onLike(post.id);
-    }
-  };
+  // 좋아요 토글 핸들러 (LikeButton의 onToggle 콜백) - useCallback으로 최적화
+  const handleLikeToggle = useCallback(
+    (newIsLiked: boolean, newCount: number) => {
+      setIsLiked(newIsLiked);
+      setLikesCount(newCount);
+      if (onLike) {
+        onLike(post.id);
+      }
+    },
+    [post.id, onLike]
+  );
 
   // 더블탭 좋아요 애니메이션
   useEffect(() => {
@@ -70,9 +79,9 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
     }
   }, [showDoubleTapHeart]);
 
-  // 더블탭 좋아요 (모바일)
+  // 더블탭 좋아요 (모바일) - useCallback으로 최적화
   const [lastTap, setLastTap] = useState(0);
-  const handleDoubleTap = () => {
+  const handleDoubleTap = useCallback(() => {
     const now = Date.now();
     const DOUBLE_TAP_DELAY = 300;
 
@@ -89,7 +98,7 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
     } else {
       setLastTap(now);
     }
-  };
+  }, [lastTap, isLiked]);
 
   // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
@@ -108,8 +117,8 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
     };
   }, [showMenu]);
 
-  // 게시물 삭제
-  const handleDelete = async () => {
+  // 게시물 삭제 - useCallback으로 최적화
+  const handleDelete = useCallback(async () => {
     if (!confirm("게시물을 삭제하시겠습니까?")) {
       return;
     }
@@ -121,8 +130,8 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "게시물 삭제에 실패했습니다.");
+        const errorMessage = await getApiErrorMessage(response);
+        throw new Error(errorMessage);
       }
 
       // 부모 컴포넌트에 삭제 알림
@@ -131,7 +140,12 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
       }
     } catch (error) {
       console.error("Error deleting post:", error);
-      alert(error instanceof Error ? error.message : "게시물 삭제에 실패했습니다.");
+      const errorMessage = isNetworkError(error)
+        ? getNetworkErrorMessage(error)
+        : error instanceof Error
+        ? error.message
+        : "게시물 삭제에 실패했습니다.";
+      alert(errorMessage);
     } finally {
       setIsDeleting(false);
       setShowMenu(false);
@@ -201,6 +215,7 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 630px"
+          loading="lazy"
         />
         
         {/* 더블탭 좋아요 애니메이션 (큰 하트) */}
@@ -389,4 +404,16 @@ function formatTimeAgo(dateString: string): string {
   const diffInYears = Math.floor(diffInDays / 365);
   return `${diffInYears}년 전`;
 }
+
+// React.memo로 최적화: props가 변경되지 않으면 리렌더링 방지
+export const PostCard = memo(PostCardComponent, (prevProps, nextProps) => {
+  // 커스텀 비교 함수: post의 주요 속성만 비교
+  return (
+    prevProps.post.id === nextProps.post.id &&
+    prevProps.post.likes_count === nextProps.post.likes_count &&
+    prevProps.post.comments_count === nextProps.post.comments_count &&
+    prevProps.post.is_liked === nextProps.post.is_liked &&
+    prevProps.post.caption === nextProps.post.caption
+  );
+});
 

@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
     if (postsError) {
       console.error("Error fetching posts:", postsError);
       return NextResponse.json(
-        { error: "Failed to fetch posts" },
+        { error: "게시물을 불러오는데 실패했습니다." },
         { status: 500 }
       );
     }
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error in GET /api/posts:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "게시물을 불러오는데 실패했습니다." },
       { status: 500 }
     );
   }
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
 
     if (!clerkUserId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
+        { error: "로그인이 필요합니다." },
         { status: 401 }
       );
     }
@@ -192,7 +192,7 @@ export async function POST(request: NextRequest) {
     // 이미지 파일 검증
     if (!imageFile) {
       return NextResponse.json(
-        { error: "Image file is required" },
+        { error: "이미지 파일을 선택해주세요." },
         { status: 400 }
       );
     }
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     if (imageFile.size > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: `File size exceeds 5MB (current: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB)` },
+        { error: `파일 크기가 5MB를 초과합니다. (현재: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB)` },
         { status: 400 }
       );
     }
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
     const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     if (!ALLOWED_IMAGE_TYPES.includes(imageFile.type)) {
       return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, WebP, and GIF are allowed." },
+        { error: "지원하지 않는 파일 형식입니다. JPEG, PNG, WebP, GIF만 업로드 가능합니다." },
         { status: 400 }
       );
     }
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
     const MAX_CAPTION_LENGTH = 2200;
     if (caption && caption.length > MAX_CAPTION_LENGTH) {
       return NextResponse.json(
-        { error: `Caption exceeds ${MAX_CAPTION_LENGTH} characters` },
+        { error: `캡션은 최대 ${MAX_CAPTION_LENGTH}자까지 입력 가능합니다.` },
         { status: 400 }
       );
     }
@@ -234,7 +234,7 @@ export async function POST(request: NextRequest) {
     if (userError || !userData) {
       console.error("Error fetching user:", userError);
       return NextResponse.json(
-        { error: "User not found" },
+        { error: "사용자를 찾을 수 없습니다." },
         { status: 404 }
       );
     }
@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
     if (uploadError) {
       console.error("Error uploading file:", uploadError);
       return NextResponse.json(
-        { error: "Failed to upload image", details: uploadError.message },
+        { error: "이미지 업로드에 실패했습니다.", details: uploadError.message },
         { status: 500 }
       );
     }
@@ -272,7 +272,7 @@ export async function POST(request: NextRequest) {
 
     if (!urlData?.publicUrl) {
       return NextResponse.json(
-        { error: "Failed to get public URL" },
+        { error: "이미지 URL을 가져오는데 실패했습니다." },
         { status: 500 }
       );
     }
@@ -293,7 +293,7 @@ export async function POST(request: NextRequest) {
       // 업로드된 파일 삭제 시도 (실패해도 계속 진행)
       await supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
       return NextResponse.json(
-        { error: "Failed to create post", details: postError.message },
+        { error: "게시물 생성에 실패했습니다.", details: postError.message },
         { status: 500 }
       );
     }
@@ -305,7 +305,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error in POST /api/posts:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요." },
       { status: 500 }
     );
   }
