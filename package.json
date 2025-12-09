@@ -20,9 +20,9 @@
     "verify:all": "tsx scripts/verify-database.ts && tsx scripts/verify-storage.ts"
   },
   "dependencies": {
-    "@clerk/backend": "^1.33.1",
-    "@clerk/localizations": "^3.26.3",
-    "@clerk/nextjs": "^6.20.0",
+    "@clerk/backend": "^2.26.0",
+    "@clerk/localizations": "^3.30.0",
+    "@clerk/nextjs": "^6.36.1",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-dialog": "^1.1.14",
