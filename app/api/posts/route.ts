@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       .select(
         `
         *,
-        user:users!posts_user_id_fkey(
+        user:users(
           id,
           clerk_id,
           name,
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
         code: postsError.code,
       });
       return NextResponse.json(
-        { 
+        {
           error: "게시물을 불러오는데 실패했습니다.",
           details: postsError.message || "데이터베이스 쿼리 실패"
         },
@@ -171,7 +171,7 @@ export async function GET(request: NextRequest) {
     const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
     console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
     return NextResponse.json(
-      { 
+      {
         error: "게시물을 불러오는데 실패했습니다.",
         details: errorMessage
       },

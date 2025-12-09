@@ -127,8 +127,11 @@ export async function createClerkSupabaseClient() {
     // Clerk 토큰을 Supabase 요청에 자동으로 포함
     // 이 토큰은 Clerk Dashboard에서 Supabase 통합을 활성화하면
     // 'role': 'authenticated' 클레임이 자동으로 포함됨
-    async accessToken() {
-      return (await auth()).getToken() ?? null;
+    // Clerk 토큰을 Supabase 요청에 자동으로 포함
+    global: {
+      headers: {
+        Authorization: `Bearer ${await (await auth()).getToken()}`,
+      },
     },
   });
 }
