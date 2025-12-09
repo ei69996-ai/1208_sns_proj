@@ -149,6 +149,15 @@ export interface CommentWithUser extends Comment {
   user: User;
 }
 
+/**
+ * Post + User + Stats + Like 상태 조합 타입
+ * 게시물, 작성자 정보, 통계 정보, 좋아요 상태를 모두 포함
+ */
+export interface PostWithUserAndStats extends PostWithStats {
+  user: User;
+  is_liked?: boolean; // 현재 사용자가 좋아요를 눌렀는지 여부
+}
+
 // ============================================
 // API 응답 타입
 // ============================================

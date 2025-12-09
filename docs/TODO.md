@@ -28,109 +28,114 @@
 
 ## 1. 기본 세팅
 
-- [ ] Tailwind CSS 설정 (인스타 컬러 스키마)
-  - [ ] `app/globals.css`에 Instagram 컬러 변수 추가
-  - [ ] 타이포그래피 설정
-- [ ] Supabase 데이터베이스 마이그레이션
-  - [ ] `db.sql` 파일을 Supabase에 적용
-  - [ ] 테이블 생성 확인 (users, posts, likes, comments, follows)
-  - [ ] Views 및 Triggers 확인
-- [ ] Supabase Storage 버킷 생성
-  - [ ] `posts` 버킷 생성 (공개 읽기)
-  - [ ] 업로드 정책 설정
-- [ ] TypeScript 타입 정의
-  - [ ] `lib/types.ts` 파일 생성
-  - [ ] User, Post, Like, Comment, Follow 타입 정의
+- [x] Tailwind CSS 설정 (인스타 컬러 스키마)
+  - [x] `app/globals.css`에 Instagram 컬러 변수 추가
+  - [x] 타이포그래피 설정
+- [x] Supabase 데이터베이스 마이그레이션
+  - [x] `supabase/migrations/20250108000000_initial_schema.sql` 파일 준비 완료
+  - [x] 마이그레이션 실행 가이드 작성 (`docs/setup-database.md`)
+  - [x] 데이터베이스 검증 스크립트 작성 (`scripts/verify-database.ts`)
+  - [ ] `db.sql` 파일을 Supabase에 적용 (사용자가 Supabase Dashboard에서 실행 필요)
+  - [ ] 테이블 생성 확인 (users, posts, likes, comments, follows) - 검증 스크립트로 확인 가능
+  - [ ] Views 및 Triggers 확인 - 검증 스크립트로 확인 가능
+- [x] Supabase Storage 버킷 생성
+  - [x] Storage 버킷 생성 가이드 작성 (`docs/setup-storage.md`)
+  - [x] Storage 검증 스크립트 작성 (`scripts/verify-storage.ts`)
+  - [ ] `posts` 버킷 생성 (공개 읽기) - 사용자가 Supabase Dashboard에서 실행 필요
+  - [ ] 업로드 정책 설정 - 가이드 문서 참고
+- [x] TypeScript 타입 정의
+  - [x] `lib/types.ts` 파일 생성
+  - [x] User, Post, Like, Comment, Follow 타입 정의
 
 ## 2. 레이아웃 구조
 
-- [ ] `app/(main)/layout.tsx` 생성
-  - [ ] Sidebar 통합
-  - [ ] 반응형 레이아웃 (Desktop/Tablet/Mobile)
-- [ ] `components/layout/Sidebar.tsx`
-  - [ ] Desktop: 244px 너비, 아이콘 + 텍스트
-  - [ ] Tablet: 72px 너비, 아이콘만
-  - [ ] Mobile: 숨김
-  - [ ] 메뉴 항목: 홈, 검색, 만들기, 프로필
-  - [ ] Hover 효과 및 Active 상태 스타일
-- [ ] `components/layout/Header.tsx`
-  - [ ] Mobile 전용 (60px 높이)
-  - [ ] 로고 + 알림/DM/프로필 아이콘
-- [ ] `components/layout/BottomNav.tsx`
-  - [ ] Mobile 전용 (50px 높이)
-  - [ ] 5개 아이콘: 홈, 검색, 만들기, 좋아요, 프로필
+- [x] `app/(main)/layout.tsx` 생성
+  - [x] Sidebar 통합
+  - [x] 반응형 레이아웃 (Desktop/Tablet/Mobile)
+- [x] `components/layout/Sidebar.tsx`
+  - [x] Desktop: 244px 너비, 아이콘 + 텍스트
+  - [x] Tablet: 72px 너비, 아이콘만
+  - [x] Mobile: 숨김
+  - [x] 메뉴 항목: 홈, 검색, 만들기, 프로필
+  - [x] Hover 효과 및 Active 상태 스타일
+- [x] `components/layout/Header.tsx`
+  - [x] Mobile 전용 (60px 높이)
+  - [x] 로고 + 알림/DM/프로필 아이콘
+- [x] `components/layout/BottomNav.tsx`
+  - [x] Mobile 전용 (50px 높이)
+  - [x] 5개 아이콘: 홈, 검색, 만들기, 좋아요, 프로필
 
 ## 3. 홈 피드 페이지
 
-- [ ] `app/(main)/page.tsx` 생성
-  - [ ] PostFeed 컴포넌트 통합
-  - [ ] 배경색 #FAFAFA 설정
-- [ ] `components/post/PostCard.tsx`
-  - [ ] 헤더 (프로필 이미지 32px, 사용자명, 시간, ⋯ 메뉴)
-  - [ ] 이미지 영역 (1:1 정사각형)
-  - [ ] 액션 버튼 (좋아요, 댓글, 공유, 북마크)
-  - [ ] 좋아요 수 표시
-  - [ ] 캡션 (사용자명 Bold + 내용, 2줄 초과 시 "... 더 보기")
-  - [ ] 댓글 미리보기 (최신 2개)
-- [ ] `components/post/PostCardSkeleton.tsx`
-  - [ ] 로딩 UI (Skeleton + Shimmer 효과)
-- [ ] `components/post/PostFeed.tsx`
-  - [ ] 게시물 목록 렌더링
-  - [ ] 무한 스크롤 (Intersection Observer)
-  - [ ] 페이지네이션 (10개씩)
-- [ ] `app/api/posts/route.ts`
-  - [ ] GET: 게시물 목록 조회 (시간 역순 정렬)
-  - [ ] 페이지네이션 지원 (limit, offset)
-  - [ ] userId 파라미터 지원 (프로필 페이지용)
+- [x] `app/(main)/page.tsx` 생성
+  - [x] PostFeed 컴포넌트 통합
+  - [x] 배경색 #FAFAFA 설정
+- [x] `components/post/PostCard.tsx`
+  - [x] 헤더 (프로필 이미지 32px, 사용자명, 시간, ⋯ 메뉴)
+  - [x] 이미지 영역 (1:1 정사각형)
+  - [x] 액션 버튼 (좋아요, 댓글, 공유, 북마크)
+  - [x] 좋아요 수 표시
+  - [x] 캡션 (사용자명 Bold + 내용, 2줄 초과 시 "... 더 보기")
+  - [x] 댓글 미리보기 (최신 2개)
+- [x] `components/post/PostCardSkeleton.tsx`
+  - [x] 로딩 UI (Skeleton + Shimmer 효과)
+- [x] `components/post/PostFeed.tsx`
+  - [x] 게시물 목록 렌더링
+  - [x] 무한 스크롤 (Intersection Observer)
+  - [x] 페이지네이션 (10개씩)
+- [x] `app/api/posts/route.ts`
+  - [x] GET: 게시물 목록 조회 (시간 역순 정렬)
+  - [x] 페이지네이션 지원 (limit, offset)
+  - [x] userId 파라미터 지원 (프로필 페이지용)
 
 ## 4. 좋아요 기능
 
-- [ ] `app/api/likes/route.ts`
-  - [ ] POST: 좋아요 추가
-  - [ ] DELETE: 좋아요 제거
-  - [ ] 인증 검증 (Clerk)
-- [ ] `components/post/LikeButton.tsx`
-  - [ ] 빈 하트 ↔ 빨간 하트 상태 관리
-  - [ ] 클릭 애니메이션 (scale 1.3 → 1)
-  - [ ] 더블탭 좋아요 (모바일, 큰 하트 fade in/out)
-- [ ] PostCard에 LikeButton 통합
-  - [ ] 좋아요 상태 표시
-  - [ ] 좋아요 수 실시간 업데이트
+- [x] `app/api/likes/route.ts`
+  - [x] POST: 좋아요 추가
+  - [x] DELETE: 좋아요 제거
+  - [x] 인증 검증 (Clerk)
+- [x] `components/post/LikeButton.tsx`
+  - [x] 빈 하트 ↔ 빨간 하트 상태 관리
+  - [x] 클릭 애니메이션 (scale 1.3 → 1)
+  - [x] 더블탭 좋아요 (모바일, 큰 하트 fade in/out)
+- [x] PostCard에 LikeButton 통합
+  - [x] 좋아요 상태 표시
+  - [x] 좋아요 수 실시간 업데이트
 
 ## 5. 게시물 작성
 
-- [ ] `components/post/CreatePostModal.tsx`
-  - [ ] Dialog 컴포넌트 사용
-  - [ ] 이미지 미리보기 UI
-  - [ ] 텍스트 입력 필드 (최대 2,200자)
-  - [ ] 파일 선택 버튼
-  - [ ] 업로드 버튼
-- [ ] `app/api/posts/route.ts`
-  - [ ] POST: 게시물 생성
-  - [ ] 이미지 파일 검증 (최대 5MB)
-  - [ ] Supabase Storage 업로드
-  - [ ] posts 테이블에 데이터 저장
-  - [ ] 인증 검증 (Clerk)
-- [ ] Sidebar "만들기" 버튼 연결
-  - [ ] CreatePostModal 열기
+- [x] `components/post/CreatePostModal.tsx`
+  - [x] Dialog 컴포넌트 사용
+  - [x] 이미지 미리보기 UI
+  - [x] 텍스트 입력 필드 (최대 2,200자)
+  - [x] 파일 선택 버튼
+  - [x] 업로드 버튼
+- [x] `app/api/posts/route.ts`
+  - [x] POST: 게시물 생성
+  - [x] 이미지 파일 검증 (최대 5MB)
+  - [x] Supabase Storage 업로드
+  - [x] posts 테이블에 데이터 저장
+  - [x] 인증 검증 (Clerk)
+- [x] Sidebar "만들기" 버튼 연결
+  - [x] CreatePostModal 열기
 
 ## 6. 댓글 기능
 
-- [ ] `components/comment/CommentList.tsx`
-  - [ ] 댓글 목록 렌더링
-  - [ ] PostCard: 최신 2개만 표시
-  - [ ] 상세 모달: 전체 댓글 + 스크롤
-  - [ ] 삭제 버튼 (본인만 표시)
-- [ ] `components/comment/CommentForm.tsx`
-  - [ ] 댓글 입력 필드 ("댓글 달기...")
-  - [ ] Enter 키 또는 "게시" 버튼으로 제출
-- [ ] `app/api/comments/route.ts`
-  - [ ] POST: 댓글 작성
-  - [ ] DELETE: 댓글 삭제 (본인만)
-  - [ ] 인증 검증 (Clerk)
-- [ ] PostCard에 댓글 기능 통합
-  - [ ] CommentList 통합
-  - [ ] CommentForm 통합
+- [x] `components/comment/CommentList.tsx`
+  - [x] 댓글 목록 렌더링
+  - [x] PostCard: 최신 2개만 표시
+  - [x] 상세 모달: 전체 댓글 + 스크롤
+  - [x] 삭제 버튼 (본인만 표시)
+- [x] `components/comment/CommentForm.tsx`
+  - [x] 댓글 입력 필드 ("댓글 달기...")
+  - [x] Enter 키 또는 "게시" 버튼으로 제출
+- [x] `app/api/comments/route.ts`
+  - [x] POST: 댓글 작성
+  - [x] DELETE: 댓글 삭제 (본인만)
+  - [x] 인증 검증 (Clerk)
+- [x] PostCard에 댓글 기능 통합
+  - [x] CommentList 통합
+  - [x] CommentForm 통합
 
 ## 7. 게시물 상세 모달
 
