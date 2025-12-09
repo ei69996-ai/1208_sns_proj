@@ -73,7 +73,7 @@ export function Sidebar() {
                     // Link는 기본적으로 Enter 키를 처리하지만, Space 키는 명시적으로 처리
                     if (e.key === " " && item.onClick) {
                       e.preventDefault();
-                      item.onClick(e as React.MouseEvent<HTMLAnchorElement>);
+                      item.onClick(e as unknown as React.MouseEvent<HTMLAnchorElement>);
                     }
                   }
                 }}
@@ -82,10 +82,9 @@ export function Sidebar() {
                   flex items-center gap-4 px-3 py-2 rounded-lg
                   transition-colors duration-200
                   focus:outline-none focus:ring-2 focus:ring-[var(--instagram-blue)] focus:ring-offset-2
-                  ${
-                    isActive || isHomeActive
-                      ? "font-semibold text-[var(--instagram-text-primary)]"
-                      : "font-normal text-[var(--instagram-text-primary)] hover:bg-[var(--instagram-background)]"
+                  ${isActive || isHomeActive
+                    ? "font-semibold text-[var(--instagram-text-primary)]"
+                    : "font-normal text-[var(--instagram-text-primary)] hover:bg-[var(--instagram-background)]"
                   }
                 `}
               >
@@ -120,7 +119,7 @@ export function Sidebar() {
                     // Link는 기본적으로 Enter 키를 처리하지만, Space 키는 명시적으로 처리
                     if (e.key === " " && item.onClick) {
                       e.preventDefault();
-                      item.onClick(e as React.MouseEvent<HTMLAnchorElement>);
+                      item.onClick(e as unknown as React.MouseEvent<HTMLAnchorElement>);
                     }
                   }
                 }}
@@ -129,20 +128,18 @@ export function Sidebar() {
                   flex items-center justify-center w-12 h-12 rounded-lg
                   transition-colors duration-200
                   focus:outline-none focus:ring-2 focus:ring-[var(--instagram-blue)] focus:ring-offset-2
-                  ${
-                    isActive || isHomeActive
-                      ? "bg-instagram-background"
-                      : "hover:bg-instagram-background"
+                  ${isActive || isHomeActive
+                    ? "bg-instagram-background"
+                    : "hover:bg-instagram-background"
                   }
                 `}
                 title={item.label}
               >
                 <Icon
-                  className={`w-6 h-6 ${
-                    isActive || isHomeActive
+                  className={`w-6 h-6 ${isActive || isHomeActive
                       ? "text-[var(--instagram-text-primary)]"
                       : "text-[var(--instagram-text-secondary)]"
-                  }`}
+                    }`}
                 />
               </Link>
             );
