@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { getApiErrorMessage } from "@/lib/utils/error-handler";
+import {
+  getApiErrorMessage,
+  isNetworkError,
+  getNetworkErrorMessage,
+} from "@/lib/utils/error-handler";
 
 /**
  * @file FollowButton.tsx
@@ -118,10 +122,9 @@ export function FollowButton({
       }}
       className={`
         px-4 py-1.5 text-sm font-semibold rounded transition-colors
-        ${
-          isFollowing
-            ? "bg-[var(--instagram-card)] border border-[var(--instagram-border)] text-[var(--instagram-text-primary)] hover:border-red-500 hover:text-red-500"
-            : "bg-[var(--instagram-blue)] text-white hover:bg-[var(--instagram-blue)]/90"
+        ${isFollowing
+          ? "bg-[var(--instagram-card)] border border-[var(--instagram-border)] text-[var(--instagram-text-primary)] hover:border-red-500 hover:text-red-500"
+          : "bg-[var(--instagram-blue)] text-white hover:bg-[var(--instagram-blue)]/90"
         }
         ${isLoading ? "opacity-50 cursor-not-allowed" : ""}
       `}
