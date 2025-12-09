@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getApiErrorMessage } from "@/lib/utils/error-handler";
 
 /**
  * @file FollowButton.tsx

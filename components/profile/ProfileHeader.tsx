@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { UserWithStats } from "@/lib/types";
 import { FollowButton } from "./FollowButton";
+import { getApiErrorMessage, getNetworkErrorMessage, isNetworkError } from "@/lib/utils/error-handler";
 
 /**
  * @file ProfileHeader.tsx
