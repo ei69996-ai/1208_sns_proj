@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import Navbar from "@/components/Navbar";
 import { SyncUserProvider } from "@/components/providers/sync-user-provider";
-import { clerkLocalization } from "@/lib/clerk-localization";
+import { ClerkProviderWrapper } from "@/components/providers/clerk-provider-wrapper";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,14 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      appearance={{
-        // Tailwind CSS 4 호환성을 위한 설정
-        cssLayerName: "clerk",
-        // 한국어 로컬라이제이션 적용
-        localization: clerkLocalization,
-      }}
-    >
+    <ClerkProviderWrapper>
       <html lang="ko">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -45,6 +37,6 @@ export default function RootLayout({
           </SyncUserProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProviderWrapper>
   );
 }
