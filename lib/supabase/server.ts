@@ -130,7 +130,10 @@ export async function createClerkSupabaseClient() {
     // Clerk 토큰을 Supabase 요청에 자동으로 포함
     global: {
       headers: {
-        Authorization: `Bearer ${await (await auth()).getToken()}`,
+        // 토큰이 있을 때만 Authorization 헤더 추가
+        ...((await (await auth()).getToken())
+          ? { Authorization: `Bearer ${await (await auth()).getToken()}` }
+          : {}),
       },
     },
   });
