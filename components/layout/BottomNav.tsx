@@ -37,6 +37,10 @@ export function BottomNav() {
       label: "만들기",
       onClick: (e: React.MouseEvent) => {
         e.preventDefault();
+        if (!user) {
+          window.location.href = "/sign-in";
+          return;
+        }
         setIsCreateModalOpen(true);
       },
     },
@@ -78,10 +82,9 @@ export function BottomNav() {
                 flex items-center justify-center w-12 h-12
                 transition-colors duration-200
                 focus:outline-none focus:ring-2 focus:ring-[var(--instagram-blue)] focus:ring-offset-2 rounded-lg
-                ${
-                  isActive || isHomeActive
-                    ? "text-[var(--instagram-text-primary)]"
-                    : "text-[var(--instagram-text-secondary)]"
+                ${isActive || isHomeActive
+                  ? "text-[var(--instagram-text-primary)]"
+                  : "text-[var(--instagram-text-secondary)]"
                 }
               `}
               aria-label={item.label}
@@ -89,7 +92,7 @@ export function BottomNav() {
               <Icon className="w-6 h-6" />
             </Link>
           );
-          })}
+        })}
       </div>
 
       {/* 게시물 작성 모달 */}

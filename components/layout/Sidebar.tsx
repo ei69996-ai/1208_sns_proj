@@ -38,6 +38,10 @@ export function Sidebar() {
       href: "#", // 모달 열기
       onClick: (e: React.MouseEvent) => {
         e.preventDefault();
+        if (!user) {
+          window.location.href = "/sign-in";
+          return;
+        }
         setIsCreateModalOpen(true);
       },
     },
@@ -137,8 +141,8 @@ export function Sidebar() {
               >
                 <Icon
                   className={`w-6 h-6 ${isActive || isHomeActive
-                      ? "text-[var(--instagram-text-primary)]"
-                      : "text-[var(--instagram-text-secondary)]"
+                    ? "text-[var(--instagram-text-primary)]"
+                    : "text-[var(--instagram-text-secondary)]"
                     }`}
                 />
               </Link>
