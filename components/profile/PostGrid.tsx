@@ -81,6 +81,16 @@ export function PostGrid({ userId, onPostClick }: PostGridProps) {
     setSelectedPost(null);
   };
 
+  // 게시물 삭제 핸들러
+  const handleDelete = (postId: string) => {
+    // 삭제된 게시물을 목록에서 제거
+    setPosts((prev) => prev.filter((post) => post.id !== postId));
+    // 모달이 열려있고 삭제된 게시물이면 모달 닫기
+    if (selectedPostId === postId) {
+      handleCloseModal();
+    }
+  };
+
   // 로딩 상태
   if (loading) {
     return (
@@ -157,6 +167,7 @@ export function PostGrid({ userId, onPostClick }: PostGridProps) {
           postId={selectedPostId}
           onClose={handleCloseModal}
           initialPost={selectedPost}
+          onDelete={handleDelete}
         />
       )}
     </>

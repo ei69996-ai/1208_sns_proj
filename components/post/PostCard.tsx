@@ -343,6 +343,7 @@ export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardPro
       postId={isModalOpen ? post.id : null}
       onClose={() => setIsModalOpen(false)}
       initialPost={post}
+      onDelete={onDelete}
     />
     </>
   );

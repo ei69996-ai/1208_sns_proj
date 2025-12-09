@@ -143,7 +143,7 @@ export const LikeButton = forwardRef<LikeButtonRef, LikeButtonProps>(
         duration-150
         disabled:opacity-50
         disabled:cursor-not-allowed
-        ${isAnimating ? "scale-125" : "scale-100"}
+        ${isAnimating ? "scale-[1.3]" : "scale-100"}
       `}
       aria-label={isLiked ? "좋아요 취소" : "좋아요"}
     >

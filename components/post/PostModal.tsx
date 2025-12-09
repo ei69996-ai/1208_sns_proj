@@ -28,9 +28,10 @@ interface PostModalProps {
   postId: string | null; // null이면 모달 닫힘
   onClose: () => void;
   initialPost?: PostWithUserAndStats; // 선택사항: 초기 데이터
+  onDelete?: (postId: string) => void; // 게시물 삭제 콜백
 }
 
-export function PostModal({ postId, onClose, initialPost }: PostModalProps) {
+export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalProps) {
   const { user } = useUser();
   const [post, setPost] = useState<PostWithUserAndStats | null>(initialPost || null);
   const [loading, setLoading] = useState(!initialPost);
@@ -39,7 +40,13 @@ export function PostModal({ postId, onClose, initialPost }: PostModalProps) {
   const [likesCount, setLikesCount] = useState(initialPost?.likes_count || 0);
   const [commentsCount, setCommentsCount] = useState(initialPost?.comments_count || 0);
   const [refreshComments, setRefreshComments] = useState(0);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const likeButtonRef = useRef<LikeButtonRef | null>(null);
+
+  // 본인 게시물인지 확인
+  const isOwnPost = user?.id === post?.user.clerk_id;
 
   // 게시물 상세 정보 로드
   useEffect(() => {
@@ -108,7 +115,59 @@ export function PostModal({ postId, onClose, initialPost }: PostModalProps) {
     setPost(null);
     setError(null);
     setLoading(false);
+    setShowMenu(false);
     onClose();
+  };
+
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
+  // 게시물 삭제
+  const handleDelete = async () => {
+    if (!post) return;
+    if (!confirm("게시물을 삭제하시겠습니까?")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/posts/${post.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "게시물 삭제에 실패했습니다.");
+      }
+
+      // 부모 컴포넌트에 삭제 알림
+      if (onDelete) {
+        onDelete(post.id);
+      }
+
+      // 모달 닫기
+      handleClose();
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert(error instanceof Error ? error.message : "게시물 삭제에 실패했습니다.");
+    } finally {
+      setIsDeleting(false);
+      setShowMenu(false);
+    }
   };
 
   if (!postId) {
@@ -170,13 +229,30 @@ export function PostModal({ postId, onClose, initialPost }: PostModalProps) {
                   </Link>
                 </div>
 
-                {/* 더보기 버튼 */}
-                <button
-                  className="text-[var(--instagram-text-primary)] hover:opacity-70"
-                  aria-label="더보기"
-                >
-                  <MoreHorizontal className="w-6 h-6" />
-                </button>
+                {/* ⋯ 메뉴 */}
+                <div className="relative" ref={menuRef}>
+                  <button
+                    onClick={() => setShowMenu(!showMenu)}
+                    className="text-[var(--instagram-text-primary)] hover:opacity-70"
+                    aria-label="더보기"
+                    disabled={isDeleting}
+                  >
+                    <MoreHorizontal className="w-6 h-6" />
+                  </button>
+
+                  {/* 드롭다운 메뉴 */}
+                  {showMenu && isOwnPost && (
+                    <div className="absolute right-0 top-8 bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded shadow-lg z-10 min-w-[120px]">
+                      <button
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="w-full px-4 py-2 text-sm text-red-500 hover:bg-[var(--instagram-background)] text-left disabled:opacity-50"
+                      >
+                        {isDeleting ? "삭제 중..." : "삭제"}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </header>
 
               {/* 댓글 목록 (스크롤 가능) */}
