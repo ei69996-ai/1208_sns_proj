@@ -37,7 +37,7 @@ export function ProfileHeader({
   useEffect(() => {
     if (initialData) {
       setUserData(initialData);
-      setIsFollowing(initialData.is_following);
+
       return;
     }
 
@@ -144,7 +144,7 @@ export function ProfileHeader({
         {/* 통계 */}
         <div className="flex items-center gap-6 md:gap-8 mb-4" role="list">
           <div className="text-center md:text-left" role="listitem">
-            <span 
+            <span
               className="font-semibold text-[var(--instagram-text-primary)]"
               aria-label={`게시물 ${userData.posts_count.toLocaleString()}개`}
             >
@@ -155,7 +155,7 @@ export function ProfileHeader({
             </span>
           </div>
           <div className="text-center md:text-left" role="listitem">
-            <span 
+            <span
               className="font-semibold text-[var(--instagram-text-primary)]"
               aria-label={`팔로워 ${userData.followers_count.toLocaleString()}명`}
             >
@@ -166,7 +166,7 @@ export function ProfileHeader({
             </span>
           </div>
           <div className="text-center md:text-left" role="listitem">
-            <span 
+            <span
               className="font-semibold text-[var(--instagram-text-primary)]"
               aria-label={`팔로잉 ${userData.following_count.toLocaleString()}명`}
             >
