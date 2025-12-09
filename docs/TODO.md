@@ -35,14 +35,14 @@
   - [x] `supabase/migrations/20250108000000_initial_schema.sql` 파일 준비 완료
   - [x] 마이그레이션 실행 가이드 작성 (`docs/setup-database.md`)
   - [x] 데이터베이스 검증 스크립트 작성 (`scripts/verify-database.ts`)
-  - [ ] `db.sql` 파일을 Supabase에 적용 (사용자가 Supabase Dashboard에서 실행 필요)
-  - [ ] 테이블 생성 확인 (users, posts, likes, comments, follows) - 검증 스크립트로 확인 가능
-  - [ ] Views 및 Triggers 확인 - 검증 스크립트로 확인 가능
+  - [x] `db.sql` 파일을 Supabase에 적용 (사용자가 Supabase Dashboard에서 실행 완료)
+  - [x] 테이블 생성 확인 (users, posts, likes, comments, follows) - 확인 완료
+  - [x] Views 및 Triggers 확인 - post_stats, user_stats 뷰 및 트리거 확인 완료
 - [x] Supabase Storage 버킷 생성
   - [x] Storage 버킷 생성 가이드 작성 (`docs/setup-storage.md`)
   - [x] Storage 검증 스크립트 작성 (`scripts/verify-storage.ts`)
-  - [ ] `posts` 버킷 생성 (공개 읽기) - 사용자가 Supabase Dashboard에서 실행 필요
-  - [ ] 업로드 정책 설정 - 가이드 문서 참고
+  - [x] `uploads` 버킷 생성 (공개 읽기) - 마이그레이션으로 생성 완료
+  - [x] 업로드 정책 설정 - 개발 단계에서는 RLS 비활성화 상태로 설정 완료
 - [x] TypeScript 타입 정의
   - [x] `lib/types.ts` 파일 생성
   - [x] User, Post, Like, Comment, Follow 타입 정의

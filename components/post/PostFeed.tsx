@@ -34,6 +34,7 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
   const [loading, setLoading] = useState(!initialPosts);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(initialPosts?.length || 0);
+  const [error, setError] = useState<string | null>(null);
   const observerTarget = useRef<HTMLDivElement>(null);
 
   // 게시물 목록 가져오기
@@ -43,6 +44,7 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
       if (!reset && loading) return;
 
       setLoading(true);
+      setError(null); // 에러 상태 초기화
       try {
         const currentOffset = reset ? 0 : offset;
         const url = `/api/posts?limit=10&offset=${currentOffset}${
@@ -52,6 +54,15 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
         const response = await fetch(url);
         if (!response.ok) {
           const errorMessage = await getApiErrorMessage(response);
+          // API 응답에서 상세 에러 정보 추출 시도
+          try {
+            const errorData = await response.json();
+            if (errorData.details) {
+              console.error("API Error details:", errorData.details);
+            }
+          } catch {
+            // JSON 파싱 실패 시 무시
+          }
           throw new Error(errorMessage);
         }
 
@@ -65,12 +76,15 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
 
         setOffset(currentOffset + result.data.length);
         setHasMore(result.meta.hasMore);
+        setError(null); // 성공 시 에러 상태 초기화
       } catch (error) {
         console.error("Error fetching posts:", error);
-        // 네트워크 에러인 경우 사용자에게 알림 (선택사항)
-        if (isNetworkError(error)) {
-          console.error("Network error:", getNetworkErrorMessage(error));
-        }
+        const errorMessage = isNetworkError(error)
+          ? getNetworkErrorMessage(error)
+          : error instanceof Error
+          ? error.message
+          : "게시물을 불러오는데 실패했습니다.";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -177,8 +191,24 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
         </div>
       )}
 
+      {/* 에러 상태 */}
+      {error && !loading && (
+        <div className="text-center py-16">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+            <p className="text-red-800 font-semibold mb-2">오류 발생</p>
+            <p className="text-red-600 text-sm mb-4">{error}</p>
+            <button
+              onClick={() => fetchPosts(true)}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 게시물이 없을 때 */}
-      {!loading && posts.length === 0 && (
+      {!loading && !error && posts.length === 0 && (
         <div className="text-center py-16 text-[var(--instagram-text-secondary)]">
           <p className="text-lg mb-2">게시물이 없습니다</p>
           <p className="text-sm">첫 번째 게시물을 작성해보세요!</p>

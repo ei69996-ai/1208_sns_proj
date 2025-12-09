@@ -82,8 +82,17 @@ export async function GET(request: NextRequest) {
 
     if (postsError) {
       console.error("Error fetching posts:", postsError);
+      console.error("Error details:", {
+        message: postsError.message,
+        details: postsError.details,
+        hint: postsError.hint,
+        code: postsError.code,
+      });
       return NextResponse.json(
-        { error: "게시물을 불러오는데 실패했습니다." },
+        { 
+          error: "게시물을 불러오는데 실패했습니다.",
+          details: postsError.message || "데이터베이스 쿼리 실패"
+        },
         { status: 500 }
       );
     }
@@ -159,8 +168,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error in GET /api/posts:", error);
+    const errorMessage = error instanceof Error ? error.message : "알 수 없는 오류";
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
     return NextResponse.json(
-      { error: "게시물을 불러오는데 실패했습니다." },
+      { 
+        error: "게시물을 불러오는데 실패했습니다.",
+        details: errorMessage
+      },
       { status: 500 }
     );
   }

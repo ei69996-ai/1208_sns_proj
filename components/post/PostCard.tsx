@@ -150,7 +150,7 @@ function PostCardComponent({ post, onLike, onCommentClick, onDelete }: PostCardP
       setIsDeleting(false);
       setShowMenu(false);
     }
-  };
+  }, [post.id, onDelete]);
 
   return (
     <>
