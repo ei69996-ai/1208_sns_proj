@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { UserWithStats } from "@/lib/types";
+import { FollowButton } from "./FollowButton";
 
 /**
  * @file ProfileHeader.tsx
@@ -30,9 +31,6 @@ export function ProfileHeader({
   >(initialData || null);
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
-  const [isFollowing, setIsFollowing] = useState(
-    initialData?.is_following || false
-  );
 
   // 사용자 정보 조회
   useEffect(() => {
@@ -56,7 +54,6 @@ export function ProfileHeader({
         const data = result.data as UserWithStats & { is_following: boolean };
 
         setUserData(data);
-        setIsFollowing(data.is_following);
       } catch (err) {
         console.error("Error fetching user data:", err);
         setError("사용자 정보를 불러오는데 실패했습니다.");
@@ -119,22 +116,23 @@ export function ProfileHeader({
               프로필 편집
             </button>
           ) : (
-            <button
-              onClick={() => {
-                // TODO: 팔로우 기능 구현 (## 9. 팔로우 기능)
-                console.log("Follow/Unfollow clicked");
+            <FollowButton
+              followingId={userId}
+              isFollowing={userData.is_following}
+              onToggle={(newIsFollowing) => {
+                // 팔로우 상태 업데이트
+                setUserData((prev) => {
+                  if (!prev) return prev;
+                  return {
+                    ...prev,
+                    is_following: newIsFollowing,
+                    followers_count: newIsFollowing
+                      ? prev.followers_count + 1
+                      : Math.max(0, prev.followers_count - 1),
+                  };
+                });
               }}
-              className={`
-                px-4 py-1.5 text-sm font-semibold rounded
-                ${
-                  isFollowing
-                    ? "bg-[var(--instagram-card)] border border-[var(--instagram-border)] text-[var(--instagram-text-primary)] hover:border-red-500 hover:text-red-500"
-                    : "bg-[var(--instagram-blue)] text-white hover:bg-[var(--instagram-blue)]/90"
-                }
-              `}
-            >
-              {isFollowing ? "팔로잉" : "팔로우"}
-            </button>
+            />
           )}
         </div>
 
