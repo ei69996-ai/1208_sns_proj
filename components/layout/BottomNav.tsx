@@ -70,7 +70,7 @@ export function BottomNav() {
                   // Link는 기본적으로 Enter 키를 처리하지만, Space 키는 명시적으로 처리
                   if (e.key === " " && item.onClick) {
                     e.preventDefault();
-                    item.onClick(e as React.MouseEvent<HTMLAnchorElement>);
+                    item.onClick(e as unknown as React.MouseEvent<HTMLAnchorElement>);
                   }
                 }
               }}
