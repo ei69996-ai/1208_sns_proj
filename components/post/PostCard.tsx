@@ -9,6 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import { LikeButton, type LikeButtonRef } from "./LikeButton";
 import { CommentList } from "@/components/comment/CommentList";
 import { CommentForm } from "@/components/comment/CommentForm";
+import { PostModal } from "./PostModal";
 
 /**
  * @file PostCard.tsx
@@ -33,6 +34,7 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
   const [commentsCount, setCommentsCount] = useState(post.comments_count || 0);
   const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
   const [refreshComments, setRefreshComments] = useState(0); // 댓글 새로고침 트리거
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const likeButtonRef = useRef<LikeButtonRef>(null);
 
   // 캡션 줄 수 계산 (대략적으로)
@@ -83,6 +85,7 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
   };
 
   return (
+    <>
     <article className="bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded-lg mb-4 max-w-[630px] mx-auto">
       {/* 헤더 (60px) */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-[var(--instagram-border)]">
@@ -119,6 +122,7 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
       <div
         className="relative aspect-square bg-gray-100 cursor-pointer"
         onDoubleClick={handleDoubleTap}
+        onClick={() => setIsModalOpen(true)}
       >
         <Image
           src={post.image_url}
@@ -161,7 +165,10 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
 
           {/* 댓글 버튼 */}
           <button
-            onClick={() => onCommentClick?.(post.id)}
+            onClick={() => {
+              setIsModalOpen(true);
+              onCommentClick?.(post.id);
+            }}
             className="text-[var(--instagram-text-primary)] hover:opacity-70"
             aria-label="댓글"
           >
@@ -259,6 +266,14 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
         }}
       />
     </article>
+
+    {/* 게시물 상세 모달 */}
+    <PostModal
+      postId={isModalOpen ? post.id : null}
+      onClose={() => setIsModalOpen(false)}
+      initialPost={post}
+    />
+    </>
   );
 }
 
