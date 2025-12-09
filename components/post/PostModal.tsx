@@ -8,6 +8,7 @@ import { X, Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import type { PostWithUserAndStats } from "@/lib/types";
 import { LikeButton, type LikeButtonRef } from "./LikeButton";
@@ -193,8 +194,12 @@ export function PostModal({ postId, onClose, initialPost, onDelete }: PostModalP
             e.preventDefault(); // 삭제 중에는 ESC로 닫기 방지
           }
         }}
-        aria-labelledby={post ? `post-modal-${post.id}` : undefined}
       >
+        {post && (
+          <DialogTitle className="sr-only">
+            {post.user.name}님의 게시물
+          </DialogTitle>
+        )}
         {/* 로딩 상태 */}
         {loading && (
           <div className="flex items-center justify-center w-full h-[500px]">

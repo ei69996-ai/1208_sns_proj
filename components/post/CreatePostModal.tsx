@@ -189,10 +189,10 @@ export function CreatePostModal({
             e.preventDefault(); // 업로드 중에는 ESC로 닫기 방지
           }
         }}
-        aria-labelledby="create-post-title"
       >
+        <DialogTitle className="sr-only">새 게시물 만들기</DialogTitle>
         <DialogHeader className="px-6 py-4 border-b border-[var(--instagram-border)]">
-          <DialogTitle id="create-post-title" className="text-center">새 게시물 만들기</DialogTitle>
+          <h2 className="text-center font-semibold">새 게시물 만들기</h2>
         </DialogHeader>
 
         <div className="p-6">
