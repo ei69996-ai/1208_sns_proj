@@ -24,9 +24,10 @@ interface PostCardProps {
   currentUserId?: string;
   onLike?: (postId: string) => void;
   onCommentClick?: (postId: string) => void;
+  onDelete?: (postId: string) => void;
 }
 
-export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
+export function PostCard({ post, onLike, onCommentClick, onDelete }: PostCardProps) {
   const { user } = useUser();
   const [showFullCaption, setShowFullCaption] = useState(false);
   const [isLiked, setIsLiked] = useState(post.is_liked || false);
@@ -35,7 +36,13 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
   const [showDoubleTapHeart, setShowDoubleTapHeart] = useState(false);
   const [refreshComments, setRefreshComments] = useState(0); // 댓글 새로고침 트리거
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const likeButtonRef = useRef<LikeButtonRef>(null);
+
+  // 본인 게시물인지 확인
+  const isOwnPost = user?.id === post.user.clerk_id;
 
   // 캡션 줄 수 계산 (대략적으로)
   const captionLines = post.caption
@@ -84,6 +91,53 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
     }
   };
 
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
+
+  // 게시물 삭제
+  const handleDelete = async () => {
+    if (!confirm("게시물을 삭제하시겠습니까?")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/posts/${post.id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "게시물 삭제에 실패했습니다.");
+      }
+
+      // 부모 컴포넌트에 삭제 알림
+      if (onDelete) {
+        onDelete(post.id);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert(error instanceof Error ? error.message : "게시물 삭제에 실패했습니다.");
+    } finally {
+      setIsDeleting(false);
+      setShowMenu(false);
+    }
+  };
+
   return (
     <>
     <article className="bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded-lg mb-4 max-w-[630px] mx-auto">
@@ -110,12 +164,29 @@ export function PostCard({ post, onLike, onCommentClick }: PostCardProps) {
         </div>
 
         {/* ⋯ 메뉴 */}
-        <button
-          className="text-[var(--instagram-text-primary)] hover:opacity-70"
-          aria-label="더보기"
-        >
-          <MoreHorizontal className="w-6 h-6" />
-        </button>
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="text-[var(--instagram-text-primary)] hover:opacity-70"
+            aria-label="더보기"
+            disabled={isDeleting}
+          >
+            <MoreHorizontal className="w-6 h-6" />
+          </button>
+
+          {/* 드롭다운 메뉴 */}
+          {showMenu && isOwnPost && (
+            <div className="absolute right-0 top-8 bg-[var(--instagram-card)] border border-[var(--instagram-border)] rounded shadow-lg z-10 min-w-[120px]">
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="w-full px-4 py-2 text-sm text-red-500 hover:bg-[var(--instagram-background)] text-left disabled:opacity-50"
+              >
+                {isDeleting ? "삭제 중..." : "삭제"}
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
       {/* 이미지 영역 (1:1 정사각형) */}

@@ -117,6 +117,14 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
     console.log("Comment clicked for post:", postId);
   };
 
+  // 게시물 삭제 핸들러
+  const handleDelete = (postId: string) => {
+    // 삭제된 게시물을 목록에서 제거
+    setPosts((prev) => prev.filter((post) => post.id !== postId));
+    // offset도 조정 (선택사항)
+    setOffset((prev) => Math.max(0, prev - 1));
+  };
+
   return (
     <div className="space-y-4">
       {/* 게시물 목록 */}
@@ -126,6 +134,7 @@ export function PostFeed({ userId, initialPosts }: PostFeedProps) {
           post={post}
           onLike={handleLike}
           onCommentClick={handleCommentClick}
+          onDelete={handleDelete}
         />
       ))}
 
