@@ -88,7 +88,7 @@ export function useClerkSupabaseClient() {
         async accessToken() {
           return (await getToken()) ?? null;
         },
-      },
+      } as any,
     });
   }, [getToken]);
 
